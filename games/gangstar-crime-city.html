@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- ══════════════════════════════════════════════
+       REEMPLAZA: Nombre del juego en el título
+  ══════════════════════════════════════════════ -->
+  <title>Gangstar: Crime City — J2ME Vault</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0a0f; --bg2:#0f0f18; --panel:#13131f; --border:#1e1e35;
+      --accent:#00e5ff; --accent2:#ff3c6e; --accent3:#b967ff;
+      --text:#d0d0e8; --text-dim:#606080; --text-muted:#3a3a5a;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); color:var(--text); font-family:'Rajdhani',sans-serif; min-height:100vh; }
+    body::before {
+      content:''; position:fixed; inset:0;
+      background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);
+      pointer-events:none; z-index:9999;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background:var(--bg2); border-bottom:1px solid var(--border);
+      padding:0 2rem; display:flex; align-items:center;
+      justify-content:space-between; height:64px; position:sticky; top:0; z-index:100;
+    }
+    .logo { font-family:'Orbitron',monospace; font-size:1.3rem; font-weight:900; color:var(--accent); text-decoration:none; letter-spacing:2px; text-shadow:0 0 20px rgba(0,229,255,0.5); }
+    .logo span { color:var(--accent2); }
+    .back-btn {
+      display:inline-flex; align-items:center; gap:0.5rem;
+      background:none; border:1px solid var(--border); color:var(--text-dim);
+      font-family:'Share Tech Mono',monospace; font-size:0.78rem;
+      padding:0.4rem 1rem; cursor:pointer; border-radius:2px; text-decoration:none;
+      transition:all 0.15s;
+    }
+    .back-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+    /* ── PAGE ── */
+    .page { max-width:960px; margin:0 auto; padding:2rem 1.5rem; }
+    .detail { display:grid; grid-template-columns:260px 1fr; gap:2.5rem; }
+
+    /* ── LEFT COLUMN ── */
+    .cover { width:100%; border-radius:4px; border:1px solid var(--border); display:block; }
+    .meta { margin-top:1.2rem; display:flex; flex-direction:column; gap:0.45rem; }
+    .meta-row { display:flex; gap:0.5rem; font-size:0.82rem; align-items:flex-start; }
+    .meta-label { font-family:'Share Tech Mono',monospace; font-size:0.68rem; color:var(--text-muted); min-width:95px; padding-top:2px; }
+    .meta-value { color:var(--text); font-weight:600; }
+
+    /* ── RIGHT COLUMN ── */
+    .cat-badge { display:inline-block; font-family:'Share Tech Mono',monospace; font-size:0.68rem; color:var(--accent2); border:1px solid rgba(255,60,110,0.4); padding:2px 10px; border-radius:2px; margin-bottom:0.8rem; }
+    .game-title { font-family:'Orbitron',monospace; font-size:clamp(1.4rem,3vw,2rem); font-weight:900; color:var(--text); line-height:1.2; }
+    .divider { height:1px; background:var(--border); margin:1rem 0; }
+    .description { color:var(--text-dim); font-size:0.95rem; line-height:1.75; }
+    .section-label { font-family:'Share Tech Mono',monospace; font-size:0.62rem; color:var(--text-muted); letter-spacing:3px; margin:1.5rem 0 0.8rem; }
+    .screenshots { display:flex; gap:0.8rem; flex-wrap:wrap; }
+    .screenshot { height:140px; border-radius:3px; border:1px solid var(--border); cursor:pointer; transition:all 0.2s; }
+    .screenshot:hover { border-color:var(--accent); transform:scale(1.03); }
+    .actions { display:flex; gap:0.8rem; margin-top:1.8rem; padding-top:1.5rem; border-top:1px solid var(--border); flex-wrap:wrap; }
+    .btn-play {
+      display:inline-flex; align-items:center; gap:0.6rem;
+      background:var(--accent); color:var(--bg); border:none;
+      font-family:'Orbitron',monospace; font-size:0.78rem; font-weight:700;
+      padding:0.75rem 2rem; border-radius:2px; cursor:pointer;
+      letter-spacing:2px; transition:all 0.2s; text-transform:uppercase;
+    }
+    .btn-play:hover { background:#33eeff; box-shadow:0 0 20px rgba(0,229,255,0.4); transform:translateY(-1px); }
+    .btn-download {
+      display:inline-flex; align-items:center; gap:0.6rem;
+      background:transparent; color:var(--text); border:1px solid var(--border);
+      font-family:'Orbitron',monospace; font-size:0.78rem; font-weight:700;
+      padding:0.75rem 1.5rem; border-radius:2px; cursor:pointer;
+      letter-spacing:2px; transition:all 0.2s; text-decoration:none; text-transform:uppercase;
+    }
+    .btn-download:hover { border-color:var(--accent3); color:var(--accent3); }
+
+    /* ══════════════════════════════════════════════════
+       EMULADOR — FULLSCREEN EN MÓVIL
+    ══════════════════════════════════════════════════ */
+    #modal {
+      display:none; position:fixed; inset:0;
+      background:#000; z-index:1000;
+      flex-direction:column;
+    }
+    #modal.open { display:flex; }
+
+    .emu-topbar {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 1rem; height:44px; min-height:44px;
+      background:var(--bg2); border-bottom:1px solid var(--border);
+      flex-shrink:0;
+    }
+    .emu-gametitle { font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .emu-close {
+      background:none; border:1px solid var(--border); color:var(--text-dim);
+      font-family:'Share Tech Mono',monospace; font-size:0.7rem;
+      padding:4px 14px; border-radius:2px; cursor:pointer; white-space:nowrap; margin-left:1rem;
+    }
+    .emu-close:hover { border-color:var(--accent2); color:var(--accent2); }
+
+    .emu-body {
+      flex:1; display:flex; flex-direction:column;
+      align-items:center; justify-content:space-evenly;
+      padding:10px 8px; overflow:hidden;
+      background: radial-gradient(ellipse at center, #0d0d1a 0%, #000 100%);
+    }
+
+    /* Pantalla */
+    .emu-screen-wrap {
+      position:relative; flex-shrink:0;
+      border:2px solid var(--border); border-radius:4px; overflow:hidden;
+      box-shadow:0 0 40px rgba(0,229,255,0.06);
+    }
+    #emu-frame { display:block; border:none; width:240px; height:320px; background:#000; }
+    .emu-screen-glow { position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 0 20px rgba(0,0,0,0.6); }
+
+    /* ── CONTROLES TÁCTILES ── */
+    .emu-controls { width:100%; max-width:340px; display:flex; flex-direction:column; align-items:center; gap:8px; }
+
+    /* Botón base */
+    .cb {
+      display:flex; align-items:center; justify-content:center; flex-direction:column;
+      border-radius:8px; cursor:pointer; user-select:none; -webkit-user-select:none;
+      touch-action:manipulation; font-family:'Share Tech Mono',monospace;
+      border:1px solid rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.05);
+      color:var(--text-dim); transition:background 0.07s, transform 0.07s;
+      -webkit-tap-highlight-color:transparent; outline:none;
+    }
+    .cb:active, .cb.pressed {
+      background:rgba(0,229,255,0.15);
+      border-color:var(--accent); color:var(--accent);
+      transform:scale(0.91);
+    }
+
+    /* Soft keys */
+    .ctrl-row { display:flex; align-items:center; justify-content:space-between; width:100%; }
+    .cb-soft { height:34px; padding:0 18px; font-size:0.58rem; letter-spacing:1px; border-radius:17px; }
+
+    /* OK */
+    .cb-ok {
+      width:48px; height:48px; font-size:0.7rem; font-weight:700;
+      border-radius:50%;
+      background:rgba(0,229,255,0.08); border-color:rgba(0,229,255,0.25); color:var(--accent);
+    }
+    .cb-ok:active, .cb-ok.pressed { background:rgba(0,229,255,0.25); }
+
+    /* D-Pad */
+    .dpad { display:grid; grid-template-columns:44px 44px 44px; grid-template-rows:44px 44px 44px; gap:3px; }
+    .cb-dir { width:44px; height:44px; font-size:1.1rem; border-radius:6px; }
+
+    /* Numpad */
+    .numpad { display:grid; grid-template-columns:repeat(3, 44px); gap:4px; }
+    .cb-num { width:44px; height:40px; font-size:0.88rem; font-weight:600; }
+    .cb-num .sub { display:block; font-size:0.4rem; letter-spacing:0.5px; color:var(--text-muted); margin-top:1px; }
+    .cb-num:active .sub, .cb-num.pressed .sub { color:var(--accent); }
+
+    .gamepads-row { display:flex; gap:20px; align-items:flex-start; width:100%; justify-content:center; }
+
+    /* Hint teclado solo en desktop */
+    .kb-hint { font-family:'Share Tech Mono',monospace; font-size:0.56rem; color:var(--text-muted); text-align:center; }
+    @media(pointer:coarse) { .kb-hint { display:none; } }
+
+    /* Desktop: modal centrado, no fullscreen */
+    @media(min-width:580px) {
+      #modal { background:rgba(0,0,0,0.9); align-items:center; justify-content:center; backdrop-filter:blur(6px); }
+      #modal > .emu-shell { background:var(--panel); border:1px solid var(--border); border-radius:8px; overflow:hidden; max-width:400px; width:100%; }
+    }
+
+    /* ── LIGHTBOX ── */
+    #lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:2000; align-items:center; justify-content:center; cursor:pointer; }
+    #lightbox.open { display:flex; }
+    #lightbox img { max-width:90vw; max-height:90vh; border-radius:4px; }
+
+    /* ── FOOTER ── */
+    footer { border-top:1px solid var(--border); background:var(--bg2); padding:1.5rem 2rem; text-align:center; font-family:'Share Tech Mono',monospace; font-size:0.62rem; color:var(--text-muted); margin-top:4rem; }
+    footer span { color:var(--accent2); }
+
+    @media(max-width:650px) {
+      .detail { grid-template-columns:1fr; }
+      .cover { max-width:220px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="../index.html">J2ME<span>VAULT</span></a>
+  <a class="back-btn" href="../index.html">← CATÁLOGO</a>
+</header>
+
+<div class="page">
+  <div class="detail">
+
+    <!-- ╔══════════════════════════════════════╗
+         ║      COLUMNA IZQUIERDA              ║
+         ╚══════════════════════════════════════╝ -->
+    <div>
+      <!-- ══ REEMPLAZA: ruta a la imagen de portada. Ej: ../images/mi-juego.png ══ -->
+      <img class="cover" src="../images/gangstar-screen1.png" alt="Portada del juego">
+
+      <div class="meta">
+        <div class="meta-row"><span class="meta-label">NOMBRE</span>      <span class="meta-value">Gangstar: Crime City</span></div>
+        <div class="meta-row"><span class="meta-label">DESARROLLADOR</span><span class="meta-value">Gameloft</span></div>
+        <div class="meta-row"><span class="meta-label">AÑO</span>          <span class="meta-value">2006</span></div>
+        <div class="meta-row"><span class="meta-label">PLATAFORMA</span>   <span class="meta-value">Java ME / J2ME</span></div>
+        <div class="meta-row"><span class="meta-label">TAMAÑO</span>       <span class="meta-value">~800 KB</span></div>
+        <div class="meta-row"><span class="meta-label">SUBIDO POR</span>   <span class="meta-value">Admin</span></div>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════════════════════════╗
+         ║      COLUMNA DERECHA                ║
+         ╚══════════════════════════════════════╝ -->
+    <div>
+      <!-- ══ REEMPLAZA: categoría ══ -->
+      <div class="cat-badge">ACCIÓN</div>
+
+      <!-- ══ REEMPLAZA: nombre del juego ══ -->
+      <div class="game-title">Gangstar: Crime City</div>
+      <div class="divider"></div>
+
+      <!-- ══ REEMPLAZA: descripción completa ══ -->
+      <div class="description">
+        Acabas de llegar de tu ciudad natal para escapar de tu pasado. Ahora has decidido hacerte un nombre en una de las pandillas de tu nuevo territorio. Nunca te alejas del peligro ni dejas que la moral se interponga en tu camino. Además, tienes habilidades increíbles cuando se trata de manejar armas y conducir con actitud en el salvaje centro de la ciudad. ¡Así que tienes todo lo que necesitas para convertirte en el líder de pandilla más grande que la ciudad haya conocido jamás! Por supuesto, tendrás que empezar desde abajo liquidando primero tu deuda con Kingpin, el padrino del barrio que organizó tu llegada.
+      </div>
+
+      <div class="section-label">CAPTURAS DE PANTALLA</div>
+      <div class="screenshots">
+        <!-- ══ REEMPLAZA las rutas. Agrega o quita img según cuántas tengas ══ -->
+        <img class="screenshot" src="../images/gangstar-screen1.png" alt="Captura 1" onclick="openLightbox(this.src)">
+        <img class="screenshot" src="../images/gangstar-screen2.png" alt="Captura 2" onclick="openLightbox(this.src)">
+        <!-- <img class="screenshot" src="../images/CAPTURA3.png" alt="Captura 3" onclick="openLightbox(this.src)"> -->
+      </div>
+
+      <div class="actions">
+        <button class="btn-play" onclick="openEmulator()">▶ &nbsp;JUGAR</button>
+        <!-- ══ REEMPLAZA: link de descarga ══ -->
+        <a class="btn-download" href="https://www.mediafire.com/file/4yfkfx7fx3rn25p/Gangstar+Crime+City.jar/file" target="_blank">↓ &nbsp;DESCARGAR .JAR</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     EMULADOR FULLSCREEN + CONTROLES TÁCTILES
+══════════════════════════════════════════════════ -->
+<div id="modal">
+  <div class="emu-shell" style="display:flex;flex-direction:column;flex:1;width:100%;">
+
+    <div class="emu-topbar">
+      <!-- ══ REEMPLAZA: nombre del juego ══ -->
+      <div class="emu-gametitle">▶ GANGSTAR: CRIME CITY</div>
+      <button class="emu-close" onclick="closeEmulator()">✕ SALIR</button>
+    </div>
+
+    <div class="emu-body">
+
+      <!-- Pantalla -->
+      <div class="emu-screen-wrap">
+        <iframe id="emu-frame" src="about:blank" scrolling="no"></iframe>
+        <div class="emu-screen-glow"></div>
+      </div>
+
+      <!-- Controles -->
+      <div class="emu-controls">
+
+        <!-- Fila soft keys + OK -->
+        <div class="ctrl-row">
+          <button class="cb cb-soft" data-key="q" data-kc="81">MENÚ</button>
+          <button class="cb cb-ok"   data-key="Enter" data-kc="13">OK</button>
+          <button class="cb cb-soft" data-key="w" data-kc="87">ATRÁS</button>
+        </div>
+
+        <!-- D-pad + Numpad -->
+        <div class="gamepads-row">
+
+          <!-- D-PAD -->
+          <div class="dpad">
+            <div></div>
+            <button class="cb cb-dir" data-key="ArrowUp"    data-kc="38">▲</button>
+            <div></div>
+            <button class="cb cb-dir" data-key="ArrowLeft"  data-kc="37">◀</button>
+            <div></div>
+            <button class="cb cb-dir" data-key="ArrowRight" data-kc="39">▶</button>
+            <div></div>
+            <button class="cb cb-dir" data-key="ArrowDown"  data-kc="40">▼</button>
+            <div></div>
+          </div>
+
+          <!-- NUMPAD -->
+          <div class="numpad">
+            <button class="cb cb-num" data-key="1" data-kc="49">1</button>
+            <button class="cb cb-num" data-key="2" data-kc="50">2<span class="sub">ABC</span></button>
+            <button class="cb cb-num" data-key="3" data-kc="51">3<span class="sub">DEF</span></button>
+            <button class="cb cb-num" data-key="4" data-kc="52">4<span class="sub">GHI</span></button>
+            <button class="cb cb-num" data-key="5" data-kc="53">5<span class="sub">JKL</span></button>
+            <button class="cb cb-num" data-key="6" data-kc="54">6<span class="sub">MNO</span></button>
+            <button class="cb cb-num" data-key="7" data-kc="55">7<span class="sub">PQRS</span></button>
+            <button class="cb cb-num" data-key="8" data-kc="56">8<span class="sub">TUV</span></button>
+            <button class="cb cb-num" data-key="9" data-kc="57">9<span class="sub">WXYZ</span></button>
+            <button class="cb cb-num" data-key="e" data-kc="69">*</button>
+            <button class="cb cb-num" data-key="0" data-kc="48">0</button>
+            <button class="cb cb-num" data-key="r" data-kc="82">#</button>
+          </div>
+
+        </div>
+
+        <div class="kb-hint">Teclado: ↑↓←→ · Enter=OK · Q=Menú · W=Atrás · 0–9</div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lb-img" src="" alt="">
+</div>
+
+<footer>
+  <p>J2MEVAULT // PROYECTO DE PRESERVACIÓN SIN FINES DE LUCRO</p>
+  <p style="margin-top:6px">Los juegos son propiedad de sus respectivos desarrolladores. <span>Solo con fines de preservación.</span></p>
+</footer>
+
+<script>
+  // ══════════════════════════════════════════════════════
+  //  REEMPLAZA: URL directa al .jar del juego
+  // ══════════════════════════════════════════════════════
+  const JAR_URL = "https://www.mediafire.com/file/4yfkfx7fx3rn25p/Gangstar+Crime+City.jar/file";
+
+  // URL base del emulador
+  // → Fase 1: usa el emulador público de freej2me
+  // → Fase 2 (cuando tengas Vercel): cambia por tu propia URL
+  const BASE_EMU = "https://zb3.github.io/freej2me-web/";
+
+  // ── EMULADOR ──
+  function openEmulator() {
+    const url = BASE_EMU + "?jar=" + encodeURIComponent(JAR_URL);
+    document.getElementById("emu-frame").src = url;
+    document.getElementById("modal").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeEmulator() {
+    document.getElementById("modal").classList.remove("open");
+    document.getElementById("emu-frame").src = "about:blank";
+    document.body.style.overflow = "";
+  }
+
+  // ── BOTONES TÁCTILES ──
+  function sendKey(key, kc, type) {
+    const frame = document.getElementById("emu-frame");
+    const init = { key, keyCode: kc, which: kc, bubbles: true, cancelable: true };
+    const ev = new KeyboardEvent(type, init);
+    // Intentar enviar al iframe (funciona al hostear propio emulador en Fase 2)
+    try { frame.contentWindow.document.dispatchEvent(ev); } catch(_) {}
+    try { frame.contentWindow.dispatchEvent(ev); } catch(_) {}
+    // Fallback al documento principal
+    document.dispatchEvent(ev);
+  }
+
+  document.querySelectorAll(".cb[data-key]").forEach(btn => {
+    const key = btn.dataset.key;
+    const kc  = parseInt(btn.dataset.kc);
+
+    // Táctil (móvil)
+    btn.addEventListener("touchstart", e => { e.preventDefault(); btn.classList.add("pressed"); sendKey(key, kc, "keydown"); }, { passive:false });
+    btn.addEventListener("touchend",   e => { e.preventDefault(); btn.classList.remove("pressed"); sendKey(key, kc, "keyup"); }, { passive:false });
+    btn.addEventListener("touchcancel",e => { btn.classList.remove("pressed"); sendKey(key, kc, "keyup"); });
+
+    // Mouse (desktop)
+    btn.addEventListener("mousedown",  () => { btn.classList.add("pressed"); sendKey(key, kc, "keydown"); });
+    btn.addEventListener("mouseup",    () => { btn.classList.remove("pressed"); sendKey(key, kc, "keyup"); });
+    btn.addEventListener("mouseleave", () => { btn.classList.remove("pressed"); sendKey(key, kc, "keyup"); });
+  });
+
+  // ── LIGHTBOX ──
+  function openLightbox(src) {
+    document.getElementById("lb-img").src = src;
+    document.getElementById("lightbox").classList.add("open");
+  }
+  function closeLightbox() {
+    document.getElementById("lightbox").classList.remove("open");
+  }
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") { closeEmulator(); closeLightbox(); }
+  });
+</script>
+</body>
+</html>
