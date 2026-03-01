@@ -334,13 +334,13 @@
   // ══════════════════════════════════════════════════════
   //  REEMPLAZA: URL directa al .jar del juego
   // ══════════════════════════════════════════════════════
-  const JAR_URL = "https://raw.githubusercontent.com/J2MEvault/j2me-vault/main/games/Gangstar_Crime_City.jar";
 
   // ── EMULADOR ──
   // Abre en pestaña nueva — el usuario instala el juego una vez
   // y queda guardado en su navegador para siempre
   function openEmulator() {
-    const launcherUrl = "https://zb3.github.io/freej2me-web/";
+    const jarUrl = "https://cdn.jsdelivr.net/gh/J2MEvault/j2me-vault@main/games/Gangstar%20Crime%20City.jar";
+    const launcherUrl = "https://zb3.github.io/freej2me-web/?jad=" + encodeURIComponent(jarUrl);
     window.open(launcherUrl, "_blank");
   }
 
