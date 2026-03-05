@@ -101,60 +101,53 @@
     }
     .emu-close:hover { border-color:var(--accent2); color:var(--accent2); }
 
-    /* ✅ Ajuste: más espacio útil y sin “cortar” contenido */
-    .emu-body {
-      flex:1; display:flex; flex-direction:column;
-      align-items:center; justify-content:center;   /* antes: space-evenly */
-      padding:10px 8px; overflow:hidden;
-      background: radial-gradient(ellipse at center, #0d0d1a 0%, #000 100%);
-      gap:12px;
-    }
-
-    /* ✅ Pantalla (más grande + centrada + mantiene ratio 3/4) */
-    .emu-screen-wrap {
-      position:relative; flex-shrink:0;
-      border:2px solid var(--border); border-radius:4px; overflow:hidden;
-      box-shadow:0 0 40px rgba(0,229,255,0.06);
-
-      width: min(96vw, 520px);      /* antes 420px */
-      aspect-ratio: 3 / 4;
-
+    /* ✅ CAMBIO REAL: el emulador ocupa TODA el área útil del modal (sin ratio) */
+    .emu-shell{
       display:flex;
-      align-items:center;
-      justify-content:center;
-
-      /* para que el doble tap/dblclick funcione sin gestos raros */
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
+      flex-direction:column;
+      flex:1;
+      width:100%;
+      height:100dvh; /* alto real en móviles modernos (evita recortes raros) */
     }
-    #emu-frame {
-      display:block; border:none;
+
+    .emu-body{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      padding:0;              /* clave: sin padding que lo haga “chico” */
+      overflow:hidden;
+      background: radial-gradient(ellipse at center, #0d0d1a 0%, #000 100%);
+    }
+
+    .emu-screen-wrap{
+      position:relative;
+      flex:1;                 /* clave: toma todo el alto disponible */
       width:100%;
       height:100%;
+      overflow:hidden;
+
+      border:none;            /* para que se sienta full */
+      border-radius:0;
+      box-shadow:none;
       background:#000;
     }
+
+    #emu-frame{
+      display:block;
+      width:100%;
+      height:100%;
+      border:0;
+      background:#000;
+    }
+
     .emu-screen-glow { position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 0 20px rgba(0,0,0,0.6); }
 
     /* Desktop: modal centrado, no fullscreen */
     @media(min-width:580px) {
       #modal { background:rgba(0,0,0,0.9); align-items:center; justify-content:center; backdrop-filter:blur(6px); }
-      #modal > .emu-shell { background:var(--panel); border:1px solid var(--border); border-radius:8px; overflow:hidden; max-width:560px; width:100%; }
-      .emu-body { justify-content:center; gap:14px; }
-    }
-
-    /* ✅ Fullscreen del contenedor: que SIEMPRE quepa completo (no recorta HUD) */
-    .emu-screen-wrap:fullscreen {
-      width: 100vw !important;
-      height: 100vh !important;
-      aspect-ratio: auto !important;
-      border-radius: 0 !important;
-      border: none !important;
-      box-shadow: none !important;
-      background:#000;
-    }
-    .emu-screen-wrap:fullscreen #emu-frame {
-      width: 100% !important;
-      height: 100% !important;
+      #modal > .emu-shell { background:var(--panel); border:1px solid var(--border); border-radius:8px; overflow:hidden; max-width:560px; width:100%; height:auto; }
+      .emu-body { justify-content:center; }
+      .emu-screen-wrap{ width:min(96vw,560px); height: calc(min(96vw,560px) * 4 / 3); border:2px solid var(--border); border-radius:4px; box-shadow:0 0 40px rgba(0,229,255,0.06); }
     }
 
     /* ── LIGHTBOX ── */
@@ -221,7 +214,7 @@
 </div>
 
 <div id="modal">
-  <div class="emu-shell" style="display:flex;flex-direction:column;flex:1;width:100%;">
+  <div class="emu-shell">
 
     <div class="emu-topbar">
       <div class="emu-gametitle">▶ GANGSTAR: CRIME CITY</div>
@@ -264,36 +257,36 @@
     if (document.fullscreenElement) document.exitFullscreen?.();
   }
 
-  /* ✅ Fullscreen estable: doble tap (móvil) / doble click (desktop)
-     Fullscreen del CONTENEDOR .emu-screen-wrap (no del emulador interno),
-     así el HUD no se sale del campo de visión. */
-  function toggleWrapFullscreen() {
-    const wrap = document.querySelector(".emu-screen-wrap");
-    if (!wrap) return;
+  /* ✅ Fullscreen estable:
+     En vez de fullscreen del “wrap” (que puede recortar/escapar HUD),
+     hacemos fullscreen del MODAL completo. */
+  function toggleModalFullscreen() {
+    const modal = document.getElementById("modal");
+    if (!modal) return;
 
     if (document.fullscreenElement) {
       document.exitFullscreen?.();
       return;
     }
-    wrap.requestFullscreen?.();
+    modal.requestFullscreen?.();
   }
 
-  // Doble tap móvil
+  // Doble tap móvil dentro del emulador
   let lastTap = 0;
   document.addEventListener("touchend", (e) => {
     const wrap = document.querySelector(".emu-screen-wrap");
     if (!wrap || !wrap.contains(e.target)) return;
 
     const now = Date.now();
-    if (now - lastTap < 280) toggleWrapFullscreen();
+    if (now - lastTap < 280) toggleModalFullscreen();
     lastTap = now;
   }, { passive:true });
 
-  // Doble click desktop
+  // Doble click desktop dentro del emulador
   document.addEventListener("dblclick", (e) => {
     const wrap = document.querySelector(".emu-screen-wrap");
     if (!wrap || !wrap.contains(e.target)) return;
-    toggleWrapFullscreen();
+    toggleModalFullscreen();
   });
 
   function openLightbox(src) {
