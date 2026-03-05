@@ -101,21 +101,31 @@
     }
     .emu-close:hover { border-color:var(--accent2); color:var(--accent2); }
 
+    /* ✅ Ajuste: más espacio útil y sin “cortar” contenido */
     .emu-body {
       flex:1; display:flex; flex-direction:column;
-      align-items:center; justify-content:space-evenly;
+      align-items:center; justify-content:center;   /* antes: space-evenly */
       padding:10px 8px; overflow:hidden;
       background: radial-gradient(ellipse at center, #0d0d1a 0%, #000 100%);
+      gap:12px;
     }
 
-    /* Pantalla (RESPONSIVE + MÁS GRANDE, sin deformar) */
+    /* ✅ Pantalla (más grande + centrada + mantiene ratio 3/4) */
     .emu-screen-wrap {
       position:relative; flex-shrink:0;
       border:2px solid var(--border); border-radius:4px; overflow:hidden;
       box-shadow:0 0 40px rgba(0,229,255,0.06);
 
-      width: min(92vw, 420px);
+      width: min(96vw, 520px);      /* antes 420px */
       aspect-ratio: 3 / 4;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      /* para que el doble tap/dblclick funcione sin gestos raros */
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     #emu-frame {
       display:block; border:none;
@@ -128,8 +138,23 @@
     /* Desktop: modal centrado, no fullscreen */
     @media(min-width:580px) {
       #modal { background:rgba(0,0,0,0.9); align-items:center; justify-content:center; backdrop-filter:blur(6px); }
-      #modal > .emu-shell { background:var(--panel); border:1px solid var(--border); border-radius:8px; overflow:hidden; max-width:520px; width:100%; }
+      #modal > .emu-shell { background:var(--panel); border:1px solid var(--border); border-radius:8px; overflow:hidden; max-width:560px; width:100%; }
       .emu-body { justify-content:center; gap:14px; }
+    }
+
+    /* ✅ Fullscreen del contenedor: que SIEMPRE quepa completo (no recorta HUD) */
+    .emu-screen-wrap:fullscreen {
+      width: 100vw !important;
+      height: 100vh !important;
+      aspect-ratio: auto !important;
+      border-radius: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      background:#000;
+    }
+    .emu-screen-wrap:fullscreen #emu-frame {
+      width: 100% !important;
+      height: 100% !important;
     }
 
     /* ── LIGHTBOX ── */
@@ -236,7 +261,40 @@
     document.getElementById("modal").classList.remove("open");
     document.getElementById("emu-frame").src = "about:blank";
     document.body.style.overflow = "";
+    if (document.fullscreenElement) document.exitFullscreen?.();
   }
+
+  /* ✅ Fullscreen estable: doble tap (móvil) / doble click (desktop)
+     Fullscreen del CONTENEDOR .emu-screen-wrap (no del emulador interno),
+     así el HUD no se sale del campo de visión. */
+  function toggleWrapFullscreen() {
+    const wrap = document.querySelector(".emu-screen-wrap");
+    if (!wrap) return;
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.();
+      return;
+    }
+    wrap.requestFullscreen?.();
+  }
+
+  // Doble tap móvil
+  let lastTap = 0;
+  document.addEventListener("touchend", (e) => {
+    const wrap = document.querySelector(".emu-screen-wrap");
+    if (!wrap || !wrap.contains(e.target)) return;
+
+    const now = Date.now();
+    if (now - lastTap < 280) toggleWrapFullscreen();
+    lastTap = now;
+  }, { passive:true });
+
+  // Doble click desktop
+  document.addEventListener("dblclick", (e) => {
+    const wrap = document.querySelector(".emu-screen-wrap");
+    if (!wrap || !wrap.contains(e.target)) return;
+    toggleWrapFullscreen();
+  });
 
   function openLightbox(src) {
     document.getElementById("lb-img").src = src;
@@ -251,4 +309,4 @@
   });
 </script>
 </body>
-</html>
+  </html>
