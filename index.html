@@ -441,7 +441,13 @@ function updateAuthUI(session) {
     registerBtn.style.display = "none";
     logoutBtn.style.display = "inline-block";
     userEmail.style.display = "inline-block";
-    userEmail.textContent = session.user.email;
+
+if (window.innerWidth < 700) {
+  userEmail.textContent = "USER";
+} else {
+  userEmail.textContent = session.user.email;
+}
+    
   } else {
     loginBtn.style.display = "inline-block";
     registerBtn.style.display = "inline-block";
