@@ -353,6 +353,7 @@ console.log("Supabase conectado:", supabase);
   
 <div id="user-area">
 <button id="login-btn">Login</button>
+   <button id="register-btn">Register</button>
 </div>
   
 </header>
@@ -378,7 +379,26 @@ alert("Bienvenido")
 }
 
   </script>
+<script>
+document.getElementById("register-btn").onclick = async () => {
 
+const email = prompt("Email")
+const password = prompt("Password")
+
+const { data, error } = await supabase.auth.signUp({
+email: email,
+password: password
+})
+
+if(error){
+alert("Register error")
+}else{
+alert("Cuenta creada")
+}
+
+}
+</script>
+  
 <section class="hero">
   <div class="hero-grid"></div>
   <h1>
