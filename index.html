@@ -343,7 +343,7 @@ const supabaseKey = "sb_publishable_tCLHHRkI3twgINafbj-q-A_EVDvwn-Y"
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey)
 
-console.log("Supabase conectado:", supabase);
+console.log("Supabase conectado:", supabaseClient);
 </script>
   
 <header>
@@ -367,7 +367,7 @@ document.getElementById("login-btn").onclick = async () => {
     const password = prompt("Password");
     if (!password) return;
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
       email,
       password
     });
@@ -515,4 +515,4 @@ const { data, error } = await supabaseClient.auth.signUp({
   init();
 </script>
 </body>
-</html>
+  </html>
