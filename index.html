@@ -353,13 +353,36 @@ console.log("Supabase conectado:", supabaseClient);
   
 <div id="user-area">
 <button id="login-btn">Login</button>
-   <button id="register-btn">Register</button>
+<button id="register-btn">Register</button>
+<button id="logout-btn" style="display:none;">Logout</button>
+<span id="user-email" style="display:none;"></span>
 </div>
   
 </header>
 
-  <script>
-document.getElementById("login-btn").onclick = async () => {
+<script>
+const loginBtn = document.getElementById("login-btn");
+const registerBtn = document.getElementById("register-btn");
+const logoutBtn = document.getElementById("logout-btn");
+const userEmail = document.getElementById("user-email");
+
+function updateAuthUI(session) {
+  if (session && session.user) {
+    loginBtn.style.display = "none";
+    registerBtn.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+    userEmail.style.display = "inline-block";
+    userEmail.textContent = session.user.email;
+  } else {
+    loginBtn.style.display = "inline-block";
+    registerBtn.style.display = "inline-block";
+    logoutBtn.style.display = "none";
+    userEmail.style.display = "none";
+    userEmail.textContent = "";
+  }
+}
+
+loginBtn.onclick = async () => {
   try {
     const email = prompt("Email");
     if (!email) return;
@@ -380,21 +403,22 @@ document.getElementById("login-btn").onclick = async () => {
 
     alert("Bienvenido");
     console.log("Login correcto:", data);
+    updateAuthUI(data.session);
   } catch (err) {
     alert("Error inesperado en login");
     console.error("Login catch:", err);
   }
 };
 
-document.getElementById("register-btn").onclick = async () => {
+registerBtn.onclick = async () => {
   try {
     const email = prompt("Email");
     if (!email) return;
 
     const password = prompt("Password");
     if (!password) return;
-const { data, error } = await supabaseClient.auth.signUp({
-    
+
+    const { data, error } = await supabaseClient.auth.signUp({
       email,
       password
     });
@@ -407,11 +431,33 @@ const { data, error } = await supabaseClient.auth.signUp({
 
     alert("Cuenta creada");
     console.log("Registro correcto:", data);
+    updateAuthUI(data.session);
   } catch (err) {
     alert("Error inesperado en registro");
     console.error("Register catch:", err);
   }
 };
+
+logoutBtn.onclick = async () => {
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    alert("Logout error: " + error.message);
+    console.error("Logout error:", error);
+    return;
+  }
+
+  alert("Sesión cerrada");
+  updateAuthUI(null);
+};
+
+supabaseClient.auth.getSession().then(({ data }) => {
+  updateAuthUI(data.session);
+});
+
+supabaseClient.auth.onAuthStateChange((_event, session) => {
+  updateAuthUI(session);
+});
 </script>
   
 <section class="hero">
@@ -515,4 +561,4 @@ const { data, error } = await supabaseClient.auth.signUp({
   init();
 </script>
 </body>
-  </html>
+</html>
