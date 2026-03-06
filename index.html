@@ -341,7 +341,7 @@
 const supabaseUrl = "https://hwhmhtubmbhnrugofqvf.supabase.co"
 const supabaseKey = "sb_publishable_tCLHHRkI3twgINafbj-q-A_EVDvwn-Y"
 
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey)
 
 console.log("Supabase conectado:", supabase);
 </script>
@@ -393,8 +393,8 @@ document.getElementById("register-btn").onclick = async () => {
 
     const password = prompt("Password");
     if (!password) return;
-
-    const { data, error } = await supabase.auth.signUp({
+const { data, error } = await supabaseClient.auth.signUp({
+    
       email,
       password
     });
