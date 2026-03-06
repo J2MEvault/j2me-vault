@@ -77,6 +77,75 @@
       border-radius: 2px;
     }
 
+    
+#user-area {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-left: auto;
+}
+
+#user-area button {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.7rem;
+  border-radius: 2px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+#user-area button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 12px rgba(0,229,255,0.15);
+}
+
+#user-email {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.6rem;
+  border-radius: 2px;
+  max-width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 700px) {
+  header {
+    padding: 0 0.8rem;
+    gap: 0.5rem;
+  }
+
+  .logo {
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+
+  .header-badge {
+    font-size: 0.55rem;
+    padding: 3px 6px;
+  }
+
+  #user-area {
+    gap: 0.25rem;
+  }
+
+  #user-area button,
+  #user-email {
+    font-size: 0.58rem;
+    padding: 0.28rem 0.45rem;
+  }
+
+  #user-email {
+    max-width: 95px;
+  }
+}
     /* ── HERO ── */
     .hero {
       background: linear-gradient(135deg, var(--bg2) 0%, #0d0d20 50%, var(--bg) 100%);
