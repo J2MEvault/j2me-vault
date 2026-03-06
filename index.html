@@ -347,9 +347,37 @@ console.log("Supabase conectado:", supabase);
 </script>
   
 <header>
+  
   <a class="logo" href="index.html">J2ME<span>VAULT</span></a>
   <div class="header-badge">PRESERVACIÓN // JAVA ME</div>
+  
+<div id="user-area">
+<button id="login-btn">Login</button>
+</div>
+  
 </header>
+
+  <script>
+
+document.getElementById("login-btn").onclick = async () => {
+
+const email = prompt("Email")
+const password = prompt("Password")
+
+const { data, error } = await supabase.auth.signInWithPassword({
+email: email,
+password: password
+})
+
+if(error){
+alert("Login error")
+}else{
+alert("Bienvenido")
+}
+
+}
+
+  </script>
 
 <section class="hero">
   <div class="hero-grid"></div>
