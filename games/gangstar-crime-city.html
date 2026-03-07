@@ -77,6 +77,23 @@
     }
     .btn-download:hover { border-color:var(--accent3); color:var(--accent3); }
 
+    .btn-favorite {
+      display:inline-flex; align-items:center; gap:0.6rem;
+      background:transparent; color:var(--text); border:1px solid var(--border);
+      font-family:'Orbitron',monospace; font-size:0.78rem; font-weight:700;
+      padding:0.75rem 1.5rem; border-radius:2px; cursor:pointer;
+      letter-spacing:2px; transition:all 0.2s; text-transform:uppercase;
+    }
+    .btn-favorite:hover {
+      border-color:var(--accent2); color:var(--accent2);
+      box-shadow:0 0 20px rgba(255,60,110,0.18);
+    }
+    .btn-favorite.active {
+      border-color:var(--accent2);
+      color:var(--accent2);
+      box-shadow:0 0 20px rgba(255,60,110,0.18);
+    }
+
     /* ══════════════════════════════════════════════════
        EMULADOR — FULLSCREEN EN MÓVIL
     ══════════════════════════════════════════════════ */
@@ -172,6 +189,14 @@
   <a class="back-btn" href="../index.html">← CATÁLOGO</a>
 </header>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = "https://hwhmhtubmbhnrugofqvf.supabase.co";
+  const supabaseKey = "sb_publishable_tCLHHRkI3twgINafbj-q-A_EVDvwn-Y";
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+  const GAME_SLUG = "gangstar-crime-city";
+</script>
+
 <div class="page">
   <div class="detail">
 
@@ -207,6 +232,7 @@
       <div class="actions">
         <button class="btn-play" onclick="openEmulator()">▶ &nbsp;JUGAR</button>
         <a class="btn-download" href="https://www.mediafire.com/file/4yfkfx7fx3rn25p/Gangstar+Crime+City.jar/file" target="_blank">↓ &nbsp;DESCARGAR .JAR</a>
+        <button id="favorite-btn" class="btn-favorite" onclick="toggleFavorite()">♡ &nbsp;FAVORITO</button>
       </div>
     </div>
 
@@ -242,6 +268,98 @@
 
 <script>
   const JAR_URL = "https://raw.githubusercontent.com/J2MEvault/j2me-vault/main/games/Gangstar_Crime_City.jar";
+
+  async function refreshFavoriteButton() {
+    const favoriteBtn = document.getElementById("favorite-btn");
+    if (!favoriteBtn) return;
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+      favoriteBtn.classList.remove("active");
+      favoriteBtn.innerHTML = "♡ &nbsp;FAVORITO";
+      return;
+    }
+
+    const { data, error } = await supabaseClient
+      .from("favorites")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("game_slug", GAME_SLUG)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Error comprobando favorito:", error);
+      favoriteBtn.classList.remove("active");
+      favoriteBtn.innerHTML = "♡ &nbsp;FAVORITO";
+      return;
+    }
+
+    if (data) {
+      favoriteBtn.classList.add("active");
+      favoriteBtn.innerHTML = "♥ &nbsp;EN FAVORITOS";
+    } else {
+      favoriteBtn.classList.remove("active");
+      favoriteBtn.innerHTML = "♡ &nbsp;FAVORITO";
+    }
+  }
+
+  async function toggleFavorite() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+      alert("Debes iniciar sesión para guardar favoritos");
+      return;
+    }
+
+    const { data: existing, error: checkError } = await supabaseClient
+      .from("favorites")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("game_slug", GAME_SLUG)
+      .maybeSingle();
+
+    if (checkError) {
+      alert("Error al comprobar favorito");
+      console.error(checkError);
+      return;
+    }
+
+    if (existing) {
+      const { error: deleteError } = await supabaseClient
+        .from("favorites")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("game_slug", GAME_SLUG);
+
+      if (deleteError) {
+        alert("Error al quitar favorito");
+        console.error(deleteError);
+        return;
+      }
+
+      await refreshFavoriteButton();
+      alert("Quitado de favoritos");
+    } else {
+      const { error: insertError } = await supabaseClient
+        .from("favorites")
+        .insert([
+          {
+            user_id: user.id,
+            game_slug: GAME_SLUG
+          }
+        ]);
+
+      if (insertError) {
+        alert("Error al guardar favorito");
+        console.error(insertError);
+        return;
+      }
+
+      await refreshFavoriteButton();
+      alert("Agregado a favoritos");
+    }
+  }
 
   function openEmulator() {
     const url = "https://j2mevault.github.io/freej2me-web/web/run.html?app=GangstarCrimeCity&mobile=1";
@@ -299,6 +417,12 @@
 
   document.addEventListener("keydown", e => {
     if (e.key === "Escape") { closeEmulator(); closeLightbox(); }
+  });
+
+  refreshFavoriteButton();
+
+  supabaseClient.auth.onAuthStateChange(() => {
+    refreshFavoriteButton();
   });
 </script>
 </body>
