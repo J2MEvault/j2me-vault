@@ -490,6 +490,8 @@
 </head>
 <body>
 
+<div id="toast-container"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -520,6 +522,24 @@ const loginBtn = document.getElementById("login-btn");
 const registerBtn = document.getElementById("register-btn");
 const logoutBtn = document.getElementById("logout-btn");
 const userEmail = document.getElementById("user-email");
+
+function showToast(message, type = "info") {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("toast-hide");
+    setTimeout(() => {
+      toast.remove();
+    }, 220);
+  }, 2600);
+}
 
 function updateAuthUI(session) {
   if (session && session.user) {
@@ -557,16 +577,16 @@ loginBtn.onclick = async () => {
     });
 
     if (error) {
-      alert("Login error: " + error.message);
+      showToast("Login error: " + error.message, "error");
       console.error("Login error:", error);
       return;
     }
 
-    alert("Bienvenido");
+    showToast("Bienvenido", "success");
     console.log("Login correcto:", data);
     updateAuthUI(data.session);
   } catch (err) {
-    alert("Error inesperado en login");
+    showToast("Error inesperado en login", "error");
     console.error("Login catch:", err);
   }
 };
@@ -585,16 +605,16 @@ registerBtn.onclick = async () => {
     });
 
     if (error) {
-      alert("Register error: " + error.message);
+      showToast("Register error: " + error.message, "error");
       console.error("Register error:", error);
       return;
     }
 
-    alert("Cuenta creada");
+    showToast("Cuenta creada", "success");
     console.log("Registro correcto:", data);
     updateAuthUI(data.session);
   } catch (err) {
-    alert("Error inesperado en registro");
+    showToast("Error inesperado en registro", "error");
     console.error("Register catch:", err);
   }
 };
@@ -603,12 +623,12 @@ logoutBtn.onclick = async () => {
   const { error } = await supabaseClient.auth.signOut();
 
   if (error) {
-    alert("Logout error: " + error.message);
+    showToast("Logout error: " + error.message, "error");
     console.error("Logout error:", error);
     return;
   }
 
-  alert("Sesión cerrada");
+  showToast("Sesión cerrada", "info");
   updateAuthUI(null);
 };
 
