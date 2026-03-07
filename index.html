@@ -77,75 +77,75 @@
       border-radius: 2px;
     }
 
-    
-#user-area {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin-left: auto;
-}
+    #user-area {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-left: auto;
+    }
 
-#user-area button {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
-  padding: 0.35rem 0.7rem;
-  border-radius: 2px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.72rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
+    #user-area button {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.7rem;
+      border-radius: 2px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
 
-#user-area button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  box-shadow: 0 0 12px rgba(0,229,255,0.15);
-}
+    #user-area button:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 12px rgba(0,229,255,0.15);
+    }
 
-#user-email {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.72rem;
-  color: var(--accent);
-  border: 1px solid var(--border);
-  padding: 0.35rem 0.6rem;
-  border-radius: 2px;
-  max-width: 170px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+    #user-email {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.6rem;
+      border-radius: 2px;
+      max-width: 170px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-@media (max-width: 700px) {
-  header {
-    padding: 0 0.8rem;
-    gap: 0.5rem;
-  }
+    @media (max-width: 700px) {
+      header {
+        padding: 0 0.8rem;
+        gap: 0.5rem;
+      }
 
-  .logo {
-    font-size: 1rem;
-    letter-spacing: 1px;
-  }
+      .logo {
+        font-size: 1rem;
+        letter-spacing: 1px;
+      }
 
-  .header-badge {
-    font-size: 0.55rem;
-    padding: 3px 6px;
-  }
+      .header-badge {
+        font-size: 0.55rem;
+        padding: 3px 6px;
+      }
 
-  #user-area {
-    gap: 0.25rem;
-  }
+      #user-area {
+        gap: 0.25rem;
+      }
 
-  #user-area button,
-  #user-email {
-    font-size: 0.58rem;
-    padding: 0.28rem 0.45rem;
-  }
+      #user-area button,
+      #user-email {
+        font-size: 0.58rem;
+        padding: 0.28rem 0.45rem;
+      }
 
-  #user-email {
-    max-width: 95px;
-  }
-}
+      #user-email {
+        max-width: 95px;
+      }
+    }
+
     /* ── HERO ── */
     .hero {
       background: linear-gradient(135deg, var(--bg2) 0%, #0d0d20 50%, var(--bg) 100%);
@@ -401,91 +401,213 @@
       to   { opacity:1; transform:translateY(0); }
     }
 
-    
     /* ── TOASTS ── */
-#toast-container {
-  position: fixed;
-  top: 80px;
-  right: 16px;
-  z-index: 3000;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
+    #toast-container {
+      position: fixed;
+      top: 80px;
+      right: 16px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
 
-.toast {
-  min-width: 220px;
-  max-width: 300px;
-  background: rgba(19, 19, 31, 0.96);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 0.75rem 0.9rem;
-  border-radius: 3px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.72rem;
-  box-shadow: 0 0 18px rgba(0,0,0,0.35);
-  opacity: 0;
-  transform: translateY(-8px);
-  animation: toastIn 0.22s ease forwards;
-}
+    .toast {
+      min-width: 220px;
+      max-width: 300px;
+      background: rgba(19, 19, 31, 0.96);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.75rem 0.9rem;
+      border-radius: 3px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      box-shadow: 0 0 18px rgba(0,0,0,0.35);
+      opacity: 0;
+      transform: translateY(-8px);
+      animation: toastIn 0.22s ease forwards;
+    }
 
-.toast.success {
-  border-color: var(--accent);
-  color: var(--accent);
-  box-shadow: 0 0 18px rgba(0,229,255,0.16);
-}
+    .toast.success {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 18px rgba(0,229,255,0.16);
+    }
 
-.toast.error {
-  border-color: var(--accent2);
-  color: #ff8aa8;
-  box-shadow: 0 0 18px rgba(255,60,110,0.16);
-}
+    .toast.error {
+      border-color: var(--accent2);
+      color: #ff8aa8;
+      box-shadow: 0 0 18px rgba(255,60,110,0.16);
+    }
 
-.toast.info {
-  border-color: var(--accent3);
-  color: #d7b6ff;
-  box-shadow: 0 0 18px rgba(185,103,255,0.16);
-}
+    .toast.info {
+      border-color: var(--accent3);
+      color: #d7b6ff;
+      box-shadow: 0 0 18px rgba(185,103,255,0.16);
+    }
 
-.toast-hide {
-  animation: toastOut 0.22s ease forwards;
-}
+    .toast-hide {
+      animation: toastOut 0.22s ease forwards;
+    }
 
-@keyframes toastIn {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-@keyframes toastOut {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-}
+    @keyframes toastOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+    }
 
-@media (max-width: 700px) {
-  #toast-container {
-    top: 72px;
-    right: 10px;
-    left: 10px;
-  }
+    @media (max-width: 700px) {
+      #toast-container {
+        top: 72px;
+        right: 10px;
+        left: 10px;
+      }
 
-  .toast {
-    max-width: 100%;
-    min-width: 0;
-    font-size: 0.66rem;
-  }
-}
+      .toast {
+        max-width: 100%;
+        min-width: 0;
+        font-size: 0.66rem;
+      }
+    }
+
+    /* ── AUTH MODAL ── */
+    .auth-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 4000;
+      background: rgba(0, 0, 0, 0.72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .auth-box {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(19, 19, 31, 0.98);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.2rem;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .auth-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.1rem;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-shadow: 0 0 14px rgba(0,229,255,0.28);
+    }
+
+    .auth-subtitle {
+      margin-top: 0.35rem;
+      margin-bottom: 1rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+
+    .auth-label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text);
+    }
+
+    .auth-input {
+      width: 100%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.75rem 0.8rem;
+      margin-bottom: 0.9rem;
+      border-radius: 2px;
+      outline: none;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.78rem;
+    }
+
+    .auth-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(0,229,255,0.12);
+    }
+
+    .auth-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.6rem;
+      margin-top: 0.4rem;
+    }
+
+    .auth-btn {
+      border-radius: 2px;
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      transition: all 0.15s ease;
+    }
+
+    .auth-btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .auth-btn-secondary:hover {
+      border-color: var(--text-dim);
+      color: var(--text);
+    }
+
+    .auth-btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 16px rgba(0,229,255,0.14);
+    }
+
+    .auth-btn-primary:hover {
+      background: #33eeff;
+    }
+
+    @media (max-width: 700px) {
+      .auth-box {
+        max-width: 100%;
+        padding: 1rem;
+      }
+
+      .auth-title {
+        font-size: 1rem;
+      }
+
+      .auth-input {
+        font-size: 0.72rem;
+      }
+
+      .auth-btn {
+        font-size: 0.66rem;
+        padding: 0.58rem 0.85rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -508,20 +630,47 @@ console.log("Supabase conectado:", supabaseClient);
   <a class="logo" href="index.html">J2ME<span>VAULT</span></a>
   <div class="header-badge">PRESERVACIÓN // JAVA ME</div>
   
-<div id="user-area">
-<button id="login-btn">Login</button>
-<button id="register-btn">Register</button>
-<button id="logout-btn" style="display:none;">Logout</button>
-<span id="user-email" style="display:none;"></span>
-</div>
+  <div id="user-area">
+    <button id="login-btn">Login</button>
+    <button id="register-btn">Register</button>
+    <button id="logout-btn" style="display:none;">Logout</button>
+    <span id="user-email" style="display:none;"></span>
+  </div>
   
 </header>
+
+<div id="auth-modal" class="auth-modal" style="display:none;">
+  <div class="auth-box">
+    <div class="auth-title">J2MEVAULT</div>
+    <div class="auth-subtitle" id="auth-mode-title">LOGIN</div>
+
+    <label class="auth-label" for="auth-email">Email</label>
+    <input id="auth-email" class="auth-input" type="email" autocomplete="email">
+
+    <label class="auth-label" for="auth-password">Password</label>
+    <input id="auth-password" class="auth-input" type="password" autocomplete="current-password">
+
+    <div class="auth-actions">
+      <button id="auth-cancel" class="auth-btn auth-btn-secondary" type="button">CANCELAR</button>
+      <button id="auth-submit" class="auth-btn auth-btn-primary" type="button">LOGIN</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const loginBtn = document.getElementById("login-btn");
 const registerBtn = document.getElementById("register-btn");
 const logoutBtn = document.getElementById("logout-btn");
 const userEmail = document.getElementById("user-email");
+
+const authModal = document.getElementById("auth-modal");
+const authModeTitle = document.getElementById("auth-mode-title");
+const authEmail = document.getElementById("auth-email");
+const authPassword = document.getElementById("auth-password");
+const authCancel = document.getElementById("auth-cancel");
+const authSubmit = document.getElementById("auth-submit");
+
+let authMode = "login";
 
 function showToast(message, type = "info") {
   const container = document.getElementById("toast-container");
@@ -548,11 +697,11 @@ function updateAuthUI(session) {
     logoutBtn.style.display = "inline-block";
     userEmail.style.display = "inline-block";
 
-if (window.innerWidth < 700) {
-  userEmail.textContent = "USER";
-} else {
-  userEmail.textContent = session.user.email;
-}
+    if (window.innerWidth < 700) {
+      userEmail.textContent = "USER";
+    } else {
+      userEmail.textContent = session.user.email;
+    }
     
   } else {
     loginBtn.style.display = "inline-block";
@@ -563,41 +712,84 @@ if (window.innerWidth < 700) {
   }
 }
 
-loginBtn.onclick = async () => {
-  try {
-    const email = prompt("Email");
-    if (!email) return;
+function openAuthModal(mode) {
+  authMode = mode;
 
-    const password = prompt("Password");
-    if (!password) return;
+  if (mode === "login") {
+    authModeTitle.textContent = "LOGIN";
+    authSubmit.textContent = "LOGIN";
+    authPassword.autocomplete = "current-password";
+  } else {
+    authModeTitle.textContent = "REGISTER";
+    authSubmit.textContent = "REGISTER";
+    authPassword.autocomplete = "new-password";
+  }
 
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
+  authEmail.value = "";
+  authPassword.value = "";
+  authModal.style.display = "flex";
 
-    if (error) {
-      showToast("Login error: " + error.message, "error");
-      console.error("Login error:", error);
-      return;
-    }
+  setTimeout(() => authEmail.focus(), 50);
+}
 
-    showToast("Bienvenido", "success");
-    console.log("Login correcto:", data);
-    updateAuthUI(data.session);
-  } catch (err) {
-    showToast("Error inesperado en login", "error");
-    console.error("Login catch:", err);
+function closeAuthModal() {
+  authModal.style.display = "none";
+  authEmail.value = "";
+  authPassword.value = "";
+}
+
+authCancel.onclick = () => {
+  closeAuthModal();
+};
+
+authModal.onclick = (e) => {
+  if (e.target === authModal) {
+    closeAuthModal();
   }
 };
 
-registerBtn.onclick = async () => {
-  try {
-    const email = prompt("Email");
-    if (!email) return;
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && authModal.style.display === "flex") {
+    closeAuthModal();
+  }
+});
 
-    const password = prompt("Password");
-    if (!password) return;
+loginBtn.onclick = () => {
+  openAuthModal("login");
+};
+
+registerBtn.onclick = () => {
+  openAuthModal("register");
+};
+
+authSubmit.onclick = async () => {
+  try {
+    const email = authEmail.value.trim();
+    const password = authPassword.value;
+
+    if (!email || !password) {
+      showToast("Completa email y password", "error");
+      return;
+    }
+
+    if (authMode === "login") {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        showToast("Login error: " + error.message, "error");
+        console.error("Login error:", error);
+        return;
+      }
+
+      closeAuthModal();
+      showToast("Bienvenido", "success");
+      console.log("Login correcto:", data);
+      updateAuthUI(data.session);
+      return;
+    }
 
     const { data, error } = await supabaseClient.auth.signUp({
       email,
@@ -605,141 +797,4 @@ registerBtn.onclick = async () => {
     });
 
     if (error) {
-      showToast("Register error: " + error.message, "error");
-      console.error("Register error:", error);
-      return;
-    }
-
-    showToast("Cuenta creada", "success");
-    console.log("Registro correcto:", data);
-    updateAuthUI(data.session);
-  } catch (err) {
-    showToast("Error inesperado en registro", "error");
-    console.error("Register catch:", err);
-  }
-};
-
-logoutBtn.onclick = async () => {
-  const { error } = await supabaseClient.auth.signOut();
-
-  if (error) {
-    showToast("Logout error: " + error.message, "error");
-    console.error("Logout error:", error);
-    return;
-  }
-
-  showToast("Sesión cerrada", "info");
-  updateAuthUI(null);
-};
-
-supabaseClient.auth.getSession().then(({ data }) => {
-  updateAuthUI(data.session);
-});
-
-supabaseClient.auth.onAuthStateChange((_event, session) => {
-  updateAuthUI(session);
-});
-</script>
-  
-<section class="hero">
-  <div class="hero-grid"></div>
-  <h1>
-    <div class="l1">ARCHIVO DE JUEGOS</div>
-    <div class="l2">JAVA 2ME</div>
-  </h1>
-  <p>// Preservando la era dorada de los juegos móviles clásicos //</p>
-</section>
-
-<div class="main-layout">
-  <aside class="sidebar">
-    <div class="sidebar-label">CATEGORÍAS</div>
-    <div id="cat-list"></div>
-    <div class="sidebar-divider"></div>
-    <div class="sidebar-label" style="padding-top:0">TOTAL</div>
-    <div class="sidebar-total" id="total-count"></div>
-  </aside>
-
-  <main class="catalog">
-    <div class="catalog-header">
-      <div class="catalog-label" id="cat-label">TODOS LOS JUEGOS</div>
-      <div class="search-bar">
-        <span class="search-icon">⌕</span>
-        <input type="text" id="search" placeholder="Buscar juego..." oninput="render()">
-      </div>
-    </div>
-    <div class="game-grid" id="grid"></div>
-  </main>
-</div>
-
-<footer>
-  <p>J2MEVAULT // PROYECTO DE PRESERVACIÓN SIN FINES DE LUCRO</p>
-  <p style="margin-top:6px">Los juegos son propiedad de sus respectivos desarrolladores. <span>Solo con fines de preservación.</span></p>
-</footer>
-
-<script src="games.js"></script>
-<script>
-  let activeCat = "Todos";
-
-  function init() {
-    document.getElementById("total-count").textContent = GAMES.length + " juego" + (GAMES.length !== 1 ? "s" : "");
-    renderCats();
-    render();
-  }
-
-  function renderCats() {
-    const list = document.getElementById("cat-list");
-    list.innerHTML = "";
-    CATEGORIES.forEach(cat => {
-      const count = cat === "Todos" ? GAMES.length : GAMES.filter(g => g.category === cat).length;
-      const btn = document.createElement("button");
-      btn.className = "cat-btn" + (cat === activeCat ? " active" : "");
-      btn.innerHTML = `${cat} <span class="cat-count">${count}</span>`;
-      btn.onclick = () => { activeCat = cat; renderCats(); render(); };
-      list.appendChild(btn);
-    });
-  }
-
-  function render() {
-    const q = document.getElementById("search").value.toLowerCase();
-    const filtered = GAMES.filter(g => {
-      const catOk = activeCat === "Todos" || g.category === activeCat;
-      const searchOk = !q || g.title.toLowerCase().includes(q) || g.developer.toLowerCase().includes(q);
-      return catOk && searchOk;
-    });
-
-    document.getElementById("cat-label").textContent =
-      activeCat.toUpperCase() + " — " + filtered.length + " JUEGO" + (filtered.length !== 1 ? "S" : "");
-
-    const grid = document.getElementById("grid");
-    grid.innerHTML = "";
-
-    if (!filtered.length) {
-      grid.innerHTML = `<div class="empty">// NINGÚN JUEGO ENCONTRADO //</div>`;
-      return;
-    }
-
-    filtered.forEach((game, i) => {
-      const a = document.createElement("a");
-      a.className = "game-card";
-      a.href = game.page;
-      a.style.animationDelay = (i * 0.04) + "s";
-      a.innerHTML = `
-        <div class="card-img-wrap">
-          <img class="card-thumb" src="${game.cover}" alt="${game.title}"
-               onerror="this.style.background='#1a1a2e';this.style.minHeight='180px'">
-          <div class="card-overlay"><div class="play-icon">▶</div></div>
-        </div>
-        <div class="card-info">
-          <div class="card-title">${game.title}</div>
-          <div class="card-dev">${game.developer}</div>
-          <div class="card-cat">${game.category}</div>
-        </div>
-      `;
-      grid.appendChild(a);
-    });
-  }
-
-  init();
-</script>
-</body>
-</html>
+      showToast("Register error: " + error.message, "erro
