@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>J2ME Vault — Juegos Java Clásicos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0a0a0f;
+      --bg2:       #0f0f18;
+      --panel:     #13131f;
+      --border:    #1e1e35;
+      --accent:    #00e5ff;
+      --accent2:   #ff3c6e;
+      --accent3:   #b967ff;
+      --text:      #d0d0e8;
+      --text-dim:  #606080;
+      --text-muted:#3a3a5a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(0,229,255,0.5);
+    }
+    .logo span { color: var(--accent2); }
+
+    .header-badge {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 2px;
+    }
+
+    #user-area {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-left: auto;
+    }
+
+    #user-area button {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.7rem;
+      border-radius: 2px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    #user-area button:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 12px rgba(0,229,255,0.15);
+    }
+
+    #user-email {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.6rem;
+      border-radius: 2px;
+      max-width: 170px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--bg2) 0%, #0d0d20 50%, var(--bg) 100%);
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--accent3), var(--accent2), transparent);
+    }
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .hero h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 900;
+      letter-spacing: 4px;
+      line-height: 1.1;
+      position: relative;
+    }
+    .hero h1 .l1 { color: var(--text); }
+    .hero h1 .l2 { color: var(--accent); text-shadow: 0 0 30px rgba(0,229,255,0.6); }
+    .hero p {
+      color: var(--text-dim);
+      margin-top: 0.8rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.85rem;
+      position: relative;
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+    }
+
+    .sidebar {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 0;
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
+    }
+    .sidebar-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      letter-spacing: 3px;
+      padding: 0 1.2rem 0.8rem;
+    }
+    .cat-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.6rem 1.2rem;
+      background: none;
+      border: none;
+      border-left: 2px solid transparent;
+      color: var(--text-dim);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: left;
+    }
+    .cat-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+    .cat-btn.active { color: var(--accent); border-left-color: var(--accent); background: rgba(0,229,255,0.05); }
+    .cat-count {
+      margin-left: auto;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      background: var(--border);
+      padding: 1px 6px;
+      border-radius: 2px;
+    }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 0.8rem 1.2rem; }
+    .sidebar-total {
+      padding: 0.3rem 1.2rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
+
+    .catalog { padding: 1.5rem; }
+    .catalog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+    .catalog-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      letter-spacing: 3px;
+    }
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.4rem 0.8rem;
+    }
+    .search-bar input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      width: 180px;
+    }
+    .search-bar input::placeholder { color: var(--text-muted); }
+    .search-icon { color: var(--text-muted); }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+      gap: 1rem;
+    }
+    .game-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: block;
+      animation: fadeUp 0.3s ease both;
+    }
+    .game-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,229,255,0.1);
+    }
+    .game-card:hover .card-overlay { opacity: 1; }
+    .card-img-wrap { position: relative; }
+    .card-thumb {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+      background: var(--bg2);
+    }
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,229,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: 0.2s;
+    }
+    .play-icon {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--bg);
+      font-size: 1rem;
+      font-weight: bold;
+    }
+    .card-info { padding: 0.6rem 0.7rem; }
+    .card-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-dev {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-family: 'Share Tech Mono', monospace;
+      margin-top: 2px;
+    }
+    .card-cat {
+      display: inline-block;
+      margin-top: 5px;
+      font-size: 0.62rem;
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--accent2);
+      border: 1px solid rgba(255,60,110,0.3);
+      padding: 1px 6px;
+      border-radius: 2px;
+    }
+    .empty {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 4rem;
+      color: var(--text-muted);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.85rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+    footer span { color: var(--accent2); }
+
+    #toast-container {
+      position: fixed;
+      top: 80px;
+      right: 16px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .toast {
+      min-width: 220px;
+      max-width: 300px;
+      background: rgba(19, 19, 31, 0.96);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.75rem 0.9rem;
+      border-radius: 3px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      box-shadow: 0 0 18px rgba(0,0,0,0.35);
+      opacity: 0;
+      transform: translateY(-8px);
+      animation: toastIn 0.22s ease forwards;
+    }
+    .toast.success {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 18px rgba(0,229,255,0.16);
+    }
+    .toast.error {
+      border-color: var(--accent2);
+      color: #ff8aa8;
+      box-shadow: 0 0 18px rgba(255,60,110,0.16);
+    }
+    .toast.info {
+      border-color: var(--accent3);
+      color: #d7b6ff;
+      box-shadow: 0 0 18px rgba(185,103,255,0.16);
+    }
+    .toast-hide { animation: toastOut 0.22s ease forwards; }
+
+    .auth-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.82);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 3500;
+      padding: 1rem;
+    }
+    .auth-modal.open { display: flex; }
+    .auth-box {
+      width: 100%;
+      max-width: 430px;
+      background: linear-gradient(180deg, rgba(19,19,31,0.98), rgba(15,15,24,0.98));
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.45);
+      overflow: hidden;
+    }
+    .auth-head {
+      padding: 1rem 1rem 0.4rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .auth-brand {
+      font-family: 'Orbitron', monospace;
+      color: var(--accent);
+      font-size: 1rem;
+      letter-spacing: 2px;
+    }
+    .auth-brand span { color: var(--accent2); }
+    .auth-mode {
+      margin-top: 0.45rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+    .auth-body {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .auth-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.66rem;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      margin-bottom: 0.35rem;
+      display: block;
+    }
+    .auth-input {
+      width: 100%;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.78rem 0.8rem;
+      border-radius: 3px;
+      outline: none;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+    }
+    .auth-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(0,229,255,0.16);
+    }
+    .auth-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.6rem;
+      margin-top: 0.25rem;
+      flex-wrap: wrap;
+    }
+    .auth-btn {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      border-radius: 2px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .auth-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .auth-btn.primary {
+      background: rgba(0,229,255,0.08);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .auth-btn.primary:hover {
+      background: rgba(0,229,255,0.16);
+      box-shadow: 0 0 12px rgba(0,229,255,0.16);
+    }
+
+    @media (max-width: 700px) {
+      header {
+        padding: 0 0.8rem;
+        gap: 0.5rem;
+      }
+      .logo {
+        font-size: 1rem;
+        letter-spacing: 1px;
+      }
+      .header-badge {
+        font-size: 0.55rem;
+        padding: 3px 6px;
+      }
+      #user-area {
+        gap: 0.25rem;
+      }
+      #user-area button,
+      #user-email {
+        font-size: 0.58rem;
+        padding: 0.28rem 0.45rem;
+      }
+      #user-email { max-width: 95px; }
+
+      .main-layout { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static; height: auto;
+        display: flex; flex-wrap: wrap;
+        padding: 0.8rem; gap: 0.3rem;
+      }
+      .sidebar-label, .sidebar-divider, .sidebar-total { display: none; }
+      .cat-btn {
+        width: auto; border: 1px solid var(--border);
+        border-left: 2px solid transparent;
+        border-radius: 3px; padding: 0.3rem 0.8rem; font-size: 0.8rem;
+      }
+      .cat-btn.active { border-color: var(--accent); }
+
+      #toast-container {
+        top: 72px;
+        right: 10px;
+        left: 10px;
+      }
+      .toast {
+        max-width: 100%;
+        min-width: 0;
+        font-size: 0.66rem;
+      }
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(10px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-8px); }
+    }
+  </style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<div id="auth-modal" class="auth-modal">
+  <div class="auth-box">
+    <div class="auth-head">
+      <div class="auth-brand">J2ME<span>VAULT</span></div>
+      <div class="auth-mode" id="auth-mode-title">LOGIN</div>
+    </div>
+
+    <div class="auth-body">
+      <div>
+        <label class="auth-label" for="auth-email">EMAIL</label>
+        <input id="auth-email" class="auth-input" type="email" autocomplete="email">
+      </div>
+
+      <div>
+        <label class="auth-label" for="auth-password">PASSWORD</label>
+        <input id="auth-password" class="auth-input" type="password" autocomplete="current-password">
+      </div>
+
+      <div class="auth-actions">
+        <button id="auth-cancel-btn" class="auth-btn" type="button">CANCELAR</button>
+        <button id="auth-submit-btn" class="auth-btn primary" type="button">LOGIN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseUrl = "https://hwhmhtubmbhnrugofqvf.supabase.co";
+const supabaseKey = "sb_publishable_tCLHHRkI3twgINafbj-q-A_EVDvwn-Y";
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+console.log("Supabase conectado:", supabaseClient);
+</script>
+
+<header>
+  <a class="logo" href="index.html">J2ME<span>VAULT</span></a>
+  <div class="header-badge">PRESERVACIÓN // JAVA ME</div>
+
+  <div id="user-area">
+    <button id="login-btn">Login</button>
+    <button id="register-btn">Register</button>
+    <button id="logout-btn" style="display:none;">Logout</button>
+    <span id="user-email" style="display:none;"></span>
+  </div>
+</header>
+
+<script>
+const loginBtn = document.getElementById("login-btn");
+const registerBtn = document.getElementById("register-btn");
+const logoutBtn = document.getElementById("logout-btn");
+const userEmail = document.getElementById("user-email");
+
+const authModal = document.getElementById("auth-modal");
+const authModeTitle = document.getElementById("auth-mode-title");
+const authEmail = document.getElementById("auth-email");
+const authPassword = document.getElementById("auth-password");
+const authCancelBtn = document.getElementById("auth-cancel-btn");
+const authSubmitBtn = document.getElementById("auth-submit-btn");
+
+let authMode = "login";
+
+function showToast(message, type = "info") {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("toast-hide");
+    setTimeout(() => toast.remove(), 220);
+  }, 2600);
+}
+
+function updateAuthUI(session) {
+  if (session && session.user) {
+    loginBtn.style.display = "none";
+    registerBtn.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+    userEmail.style.display = "inline-block";
+
+    if (window.innerWidth < 700) {
+      userEmail.textContent = "USER";
+    } else {
+      userEmail.textContent = session.user.email;
+    }
+  } else {
+    loginBtn.style.display = "inline-block";
+    registerBtn.style.display = "inline-block";
+    logoutBtn.style.display = "none";
+    userEmail.style.display = "none";
+    userEmail.textContent = "";
+  }
+}
+
+function openAuthModal(mode) {
+  authMode = mode;
+  authModeTitle.textContent = mode === "login" ? "LOGIN" : "REGISTER";
+  authSubmitBtn.textContent = mode === "login" ? "LOGIN" : "REGISTER";
+  authEmail.value = "";
+  authPassword.value = "";
+  authModal.classList.add("open");
+  document.body.style.overflow = "hidden";
+  setTimeout(() => authEmail.focus(), 30);
+}
+
+function closeAuthModal() {
+  authModal.classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+loginBtn.onclick = () => openAuthModal("login");
+registerBtn.onclick = () => openAuthModal("register");
+authCancelBtn.onclick = closeAuthModal;
+
+authModal.addEventListener("click", (e) => {
+  if (e.target === authModal) closeAuthModal();
+});
+
+authSubmitBtn.onclick = async () => {
+  try {
+    const email = authEmail.value.trim();
+    const password = authPassword.value;
+
+    if (!email || !password) {
+      showToast("Completa email y password", "error");
+      return;
+    }
+
+    if (authMode === "login") {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        showToast("Login error: " + error.message, "error");
+        console.error("Login error:", error);
+        return;
+      }
+
+      closeAuthModal();
+      showToast("Bienvenido", "success");
+      console.log("Login correcto:", data);
+      updateAuthUI(data.session);
+      return;
+    }
+
+    const { data, error } = await supabaseClient.auth.signUp({
+      email,
+      password
+    });
+
+    if (error) {
+      showToast("Register error: " + error.message, "error");
+      console.error("Register error:", error);
+      return;
+    }
+
+    closeAuthModal();
+    showToast("Cuenta creada", "success");
+    console.log("Registro correcto:", data);
+    updateAuthUI(data.session);
+  } catch (err) {
+    if (authMode === "login") {
+      showToast("Error inesperado en login", "error");
+      console.error("Login catch:", err);
+    } else {
+      showToast("Error inesperado en registro", "error");
+      console.error("Register catch:", err);
+    }
+  }
+};
+
+logoutBtn.onclick = async () => {
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    showToast("Logout error: " + error.message, "error");
+    console.error("Logout error:", error);
+    return;
+  }
+
+  showToast("Sesión cerrada", "info");
+  updateAuthUI(null);
+};
+
+supabaseClient.auth.getSession().then(({ data }) => {
+  updateAuthUI(data.session);
+});
+
+supabaseClient.auth.onAuthStateChange((_event, session) => {
+  updateAuthUI(session);
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && authModal.classList.contains("open")) {
+    closeAuthModal();
+  }
+});
+</script>
+
+<section class="hero">
+  <div class="hero-grid"></div>
+  <h1>
+    <div class="l1">ARCHIVO DE JUEGOS</div>
+    <div class="l2">JAVA 2ME</div>
+  </h1>
+  <p>// Preservando la era dorada de los juegos móviles clásicos //</p>
+</section>
+
+<div class="main-layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">CATEGORÍAS</div>
+    <div id="cat-list"></div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-label" style="padding-top:0">TOTAL</div>
+    <div class="sidebar-total" id="total-count"></div>
+  </aside>
+
+  <main class="catalog">
+    <div class="catalog-header">
+      <div class="catalog-label" id="cat-label">TODOS LOS JUEGOS</div>
+      <div class="search-bar">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="search" placeholder="Buscar juego..." oninput="render()">
+      </div>
+    </div>
+    <div class="game-grid" id="grid"></div>
+  </main>
+</div>
+
+<footer>
+  <p>J2MEVAULT // PROYECTO DE PRESERVACIÓN SIN FINES DE LUCRO</p>
+  <p style="margin-top:6px">Los juegos son propiedad de sus respectivos desarrolladores. <span>Solo con fines de preservación.</span></p>
+</footer>
+
+<script src="games.js"></script>
+<script>
+  let activeCat = "Todos";
+
+  function init() {
+    document.getElementById("total-count").textContent = GAMES.length + " juego" + (GAMES.length !== 1 ? "s" : "");
+    renderCats();
+    render();
+  }
+
+  function renderCats() {
+    const list = document.getElementById("cat-list");
+    list.innerHTML = "";
+    CATEGORIES.forEach(cat => {
+      const count = cat === "Todos" ? GAMES.length : GAMES.filter(g => g.category === cat).length;
+      const btn = document.createElement("button");
+      btn.className = "cat-btn" + (cat === activeCat ? " active" : "");
+      btn.innerHTML = `${cat} <span class="cat-count">${count}</span>`;
+      btn.onclick = () => { activeCat = cat; renderCats(); render(); };
+      list.appendChild(btn);
+    });
+  }
+
+  function render() {
+    const q = document.getElementById("search").value.toLowerCase();
+    const filtered = GAMES.filter(g => {
+      const catOk = activeCat === "Todos" || g.category === activeCat;
+      const searchOk = !q || g.title.toLowerCase().includes(q) || g.developer.toLowerCase().includes(q);
+      return catOk && searchOk;
+    });
+
+    document.getElementById("cat-label").textContent =
+      activeCat.toUpperCase() + " — " + filtered.length + " JUEGO" + (filtered.length !== 1 ? "S" : "");
+
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="empty">// NINGÚN JUEGO ENCONTRADO //</div>`;
+      return;
+    }
+
+    filtered.forEach((game, i) => {
+      const a = document.createElement("a");
+      a.className = "game-card";
+      a.href = game.page;
+      a.style.animationDelay = (i * 0.04) + "s";
+      a.innerHTML = `
+        <div class="card-img-wrap">
+          <img class="card-thumb" src="${game.cover}" alt="${game.title}"
+               onerror="this.style.background='#1a1a2e';this.style.minHeight='180px'">
+          <div class="card-overlay"><div class="play-icon">▶</div></div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">${game.title}</div>
+          <div class="card-dev">${game.developer}</div>
+          <div class="card-cat">${game.category}</div>
+        </div>
+      `;
+      grid.appendChild(a);
+    });
+  }
+
+  init();
+</script>
+</body>
+</html>
