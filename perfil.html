@@ -140,29 +140,29 @@
     <div class="avatar-wrap">
       <div class="avatar-glow"></div>
       <div class="avatar">
-        <span class="avatar-initials" id="avatar-initials">P3</span>
+        <span class="avatar-initials" id="avatar-initials">--</span>
       </div>
     </div>
     <div class="user-info">
-      <div class="username" id="display-username">P3GASUS</div>
+      <div class="username" id="display-username">CARGANDO...</div>
       <div class="user-rank">
         <span class="rank-dot"></span>
-        <span id="display-rank">[DEV] Desarrollador web</span>
+        <span id="display-rank">CARGANDO...</span>
       </div>
     </div>
   </div>
 
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-value" id="stat-puntos">120</div>
+      <div class="stat-value" id="stat-puntos">0</div>
       <div class="stat-label">PTS DE RANGO</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value" id="stat-rango">MOD</div>
+      <div class="stat-value" id="stat-rango">--</div>
       <div class="stat-label">SIGUIENTE RANGO</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value" id="stat-pts-next">500</div>
+      <div class="stat-value" id="stat-pts-next">0</div>
       <div class="stat-label">PTS PARA SUBIR</div>
     </div>
   </div>
@@ -173,22 +173,22 @@
     </div>
     <div class="info-row">
       <div class="info-key">USUARIO</div>
-      <div class="info-val" id="info-username">P3GASUS</div>
+      <div class="info-val" id="info-username">CARGANDO...</div>
     </div>
     <div class="info-row">
       <div class="info-key">RANGO</div>
-      <div class="info-val rank-val" id="info-rank">[DEV] Desarrollador web</div>
+      <div class="info-val rank-val" id="info-rank">CARGANDO...</div>
     </div>
     <div class="info-row">
       <div class="info-key">EMAIL</div>
-      <div class="info-val accent" id="info-email">pega***@gmail.com</div>
+      <div class="info-val accent" id="info-email">CARGANDO...</div>
     </div>
   </div>
 
   <div class="section">
     <div class="section-header">
       <div class="section-title">JUEGOS FAVORITOS</div>
-      <div class="section-count" id="fav-count">1 JUEGO</div>
+      <div class="section-count" id="fav-count">0 JUEGOS</div>
     </div>
     <div class="fav-grid" id="fav-grid"></div>
   </div>
@@ -198,22 +198,42 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-
 const supabaseUrl = "https://hwhmhtubmbhnrugofqvf.supabase.co"
 const supabaseKey = "sb_publishable_tCLHHRkI3twgINafbj-q-A_EVDvwn-Y"
 
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
 
+function setProfileNotFound(message = "USUARIO NO EXISTE") {
+  document.getElementById("avatar-initials").textContent = "??"
+  document.getElementById("display-username").textContent = message
+  document.getElementById("display-rank").textContent = "SIN DATOS"
+
+  document.getElementById("info-username").textContent = message
+  document.getElementById("info-rank").textContent = "SIN DATOS"
+  document.getElementById("info-email").textContent = "SIN DATOS"
+
+  document.getElementById("stat-puntos").textContent = "0"
+  document.getElementById("stat-rango").textContent = "--"
+  document.getElementById("stat-pts-next").textContent = "0"
+
+  document.getElementById("fav-count").textContent = "0 JUEGOS"
+  document.getElementById("fav-grid").innerHTML =
+    '<div class="fav-empty">// NO HAY DATOS DE PERFIL //</div>'
+}
+
 function getInitials(username){
+  if (!username) return "??"
   return username.slice(0,2).toUpperCase()
 }
 
 function maskEmail(email){
+  if (!email || !email.includes("@")) return "oculto"
   const [user,domain] = email.split("@")
   return user.slice(0,4) + "***@" + domain
 }
 
 function getNextRankShort(rank){
+  if (!rank) return "N/A"
   const match = rank.match(/\[(.+?)\]/)
   return match ? match[1] : rank
 }
@@ -224,79 +244,74 @@ function getUsernameFromURL(){
 }
 
 async function loadProfile(){
-
   const username = getUsernameFromURL()
 
   if(!username){
-    document.getElementById("display-username").textContent="USUARIO NO ENCONTRADO"
+    setProfileNotFound("USUARIO NO ENCONTRADO")
     return
   }
 
-  const { data:profile } = await supabase
-  .from("profiles")
-  .select("*")
-  .eq("username",username)
-  .single()
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("username", username)
+    .single()
 
-  if(!profile){
-    document.getElementById("display-username").textContent="USUARIO NO EXISTE"
+  if(error || !profile){
+    console.error("Error cargando profile:", error)
+    setProfileNotFound("USUARIO NO EXISTE")
     return
   }
 
-  document.getElementById("avatar-initials").textContent=getInitials(profile.username)
+  document.getElementById("avatar-initials").textContent = getInitials(profile.username)
+  document.getElementById("display-username").textContent = profile.display_name || profile.username || "SIN NOMBRE"
+  document.getElementById("display-rank").textContent = profile.rank || "Sin rango"
 
-  document.getElementById("display-username").textContent=profile.username
-  document.getElementById("display-rank").textContent=profile.rank
+  document.getElementById("info-username").textContent = profile.username || "SIN USUARIO"
+  document.getElementById("info-rank").textContent = profile.rank || "Sin rango"
+  document.getElementById("info-email").textContent = maskEmail(profile.email)
 
-  document.getElementById("info-username").textContent=profile.username
-  document.getElementById("info-rank").textContent=profile.rank
-  document.getElementById("info-email").textContent=maskEmail(profile.email)
-
-  document.getElementById("stat-puntos").textContent=profile.rank_points
-  document.getElementById("stat-rango").textContent=getNextRankShort(profile.next_rank)
-  document.getElementById("stat-pts-next").textContent=profile.points_to_next
+  document.getElementById("stat-puntos").textContent = profile.rank_points ?? 0
+  document.getElementById("stat-rango").textContent = getNextRankShort(profile.next_rank)
+  document.getElementById("stat-pts-next").textContent = profile.points_to_next ?? 0
 
   loadFavorites(profile.id)
-
 }
 
 async function loadFavorites(user_id){
+  const { data: favorites } = await supabase
+    .from("favorites")
+    .select("*")
+    .eq("user_id", user_id)
 
-  const { data:favorites } = await supabase
-  .from("favorites")
-  .select("*")
-  .eq("user_id",user_id)
+  const grid = document.getElementById("fav-grid")
+  grid.innerHTML = ""
 
-  const grid=document.getElementById("fav-grid")
-  grid.innerHTML=""
-
-  if(!favorites || favorites.length===0){
-    grid.innerHTML='<div class="fav-empty">// ESTE USUARIO AÚN NO TIENE FAVORITOS //</div>'
-    document.getElementById("fav-count").textContent="0 JUEGOS"
+  if(!favorites || favorites.length === 0){
+    grid.innerHTML = '<div class="fav-empty">// ESTE USUARIO AÚN NO TIENE FAVORITOS //</div>'
+    document.getElementById("fav-count").textContent = "0 JUEGOS"
     return
   }
 
-  document.getElementById("fav-count").textContent=favorites.length+" JUEGO"+(favorites.length!==1?"S":"")
+  document.getElementById("fav-count").textContent =
+    favorites.length + " JUEGO" + (favorites.length !== 1 ? "S" : "")
 
-  favorites.forEach(fav=>{
+  favorites.forEach(fav => {
+    const a = document.createElement("a")
+    a.className = "fav-card"
+    a.href = fav.game_page || "#"
 
-    const a=document.createElement("a")
-    a.className="fav-card"
-    a.href=fav.game_page
-
-    a.innerHTML=
-    `<div class="fav-icon">${fav.icon || "🎮"}</div>
-     <div class="fav-name">${fav.game_name}</div>
-     <div class="fav-cat">${fav.category || ""}</div>`
+    a.innerHTML = `
+      <div class="fav-icon">${fav.icon || "🎮"}</div>
+      <div class="fav-name">${fav.game_name || "Juego sin nombre"}</div>
+      <div class="fav-cat">${fav.category || ""}</div>
+    `
 
     grid.appendChild(a)
-
   })
-
 }
 
 loadProfile()
-
 </script>
 </body>
 </html>
