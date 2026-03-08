@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Perfil — J2ME Vault</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0a0a0f; --bg2:#0f0f18; --panel:#13131f; --border:#1e1e35;
+      --accent:#00e5ff; --accent2:#ff3c6e; --accent3:#b967ff;
+      --text:#d0d0e8; --text-dim:#606080; --text-muted:#3a3a5a;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); color:var(--text); font-family:'Rajdhani',sans-serif; min-height:100vh; }
+    body::before {
+      content:''; position:fixed; inset:0;
+      background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);
+      pointer-events:none; z-index:9999;
+    }
+
+    /* HEADER */
+    header {
+      background:var(--bg2); border-bottom:1px solid var(--border);
+      padding:0 2rem; display:flex; align-items:center; justify-content:space-between;
+      height:64px; position:sticky; top:0; z-index:100;
+    }
+    .logo { font-family:'Orbitron',monospace; font-size:1.3rem; font-weight:900; color:var(--accent); text-decoration:none; letter-spacing:2px; text-shadow:0 0 20px rgba(0,229,255,0.5); }
+    .logo span { color:var(--accent2); }
+    .back-btn {
+      display:inline-flex; align-items:center; gap:0.5rem; background:none;
+      border:1px solid var(--border); color:var(--text-dim);
+      font-family:'Share Tech Mono',monospace; font-size:0.78rem;
+      padding:0.4rem 1rem; cursor:pointer; border-radius:2px; text-decoration:none; transition:all 0.15s;
+    }
+    .back-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+    /* PAGE */
+    .page { max-width:860px; margin:0 auto; padding:2.5rem 1.5rem; }
+
+    /* PROFILE HEADER */
+    .profile-header {
+      background:var(--panel); border:1px solid var(--border); border-radius:4px;
+      padding:2rem; display:flex; align-items:center; gap:2rem;
+      position:relative; overflow:hidden; margin-bottom:1.5rem;
+      animation:fadeUp 0.3s ease both;
+    }
+    .profile-header::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent3),var(--accent2));
+    }
+    .profile-header::after {
+      content:''; position:absolute; inset:0;
+      background-image:linear-gradient(rgba(0,229,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.02) 1px,transparent 1px);
+      background-size:30px 30px; pointer-events:none;
+    }
+
+    /* AVATAR */
+    .avatar-wrap { position:relative; flex-shrink:0; }
+    .avatar-glow { position:absolute; inset:-4px; border-radius:6px; background:rgba(0,229,255,0.08); animation:pulse 3s ease-in-out infinite; }
+    .avatar {
+      width:90px; height:90px; border-radius:4px; border:2px solid var(--accent);
+      background:var(--bg2); display:flex; align-items:center; justify-content:center;
+      position:relative; z-index:1;
+    }
+    .avatar-initials {
+      font-family:'Orbitron',monospace; font-size:2.8rem; font-weight:900;
+      color:var(--accent); text-shadow:0 0 20px rgba(0,229,255,0.5);
+      letter-spacing:4px; line-height:1;
+    }
+    @keyframes pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+    /* USER INFO */
+    .user-info { flex:1; position:relative; z-index:1; }
+    .username { font-family:'Orbitron',monospace; font-size:1.6rem; font-weight:900; color:var(--text); letter-spacing:2px; }
+    .user-rank {
+      display:inline-flex; align-items:center; gap:0.4rem; margin-top:0.4rem;
+      background:rgba(185,103,255,0.1); border:1px solid rgba(185,103,255,0.3);
+      border-radius:2px; padding:3px 10px;
+      font-family:'Share Tech Mono',monospace; font-size:0.75rem; color:var(--accent3);
+    }
+    .rank-dot { width:6px; height:6px; border-radius:50%; background:var(--accent3); box-shadow:0 0 8px var(--accent3); }
+
+    /* STATS */
+    .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; animation:fadeUp 0.3s ease 0.1s both; }
+    .stat-card { background:var(--panel); border:1px solid var(--border); border-radius:4px; padding:1.2rem; text-align:center; position:relative; overflow:hidden; }
+    .stat-card::before { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0.4; }
+    .stat-value { font-family:'Orbitron',monospace; font-size:1.6rem; font-weight:700; color:var(--accent); text-shadow:0 0 15px rgba(0,229,255,0.4); }
+    .stat-label { font-family:'Share Tech Mono',monospace; font-size:0.62rem; color:var(--text-muted); letter-spacing:2px; margin-top:4px; }
+
+    /* SECTION */
+    .section { background:var(--panel); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-bottom:1.5rem; animation:fadeUp 0.3s ease 0.2s both; }
+    .section-header { padding:0.9rem 1.2rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .section-title { font-family:'Share Tech Mono',monospace; font-size:0.68rem; color:var(--text-muted); letter-spacing:3px; }
+    .section-count { font-family:'Share Tech Mono',monospace; font-size:0.65rem; color:var(--accent); background:rgba(0,229,255,0.07); border:1px solid rgba(0,229,255,0.15); padding:2px 8px; border-radius:2px; }
+
+    /* INFO ROWS */
+    .info-row { display:flex; align-items:center; padding:0.9rem 1.2rem; border-bottom:1px solid var(--border); gap:1rem; }
+    .info-row:last-child { border-bottom:none; }
+    .info-key { font-family:'Share Tech Mono',monospace; font-size:0.68rem; color:var(--text-muted); letter-spacing:1px; width:120px; flex-shrink:0; }
+    .info-val { font-size:0.95rem; color:var(--text); font-weight:600; }
+    .info-val.accent { color:var(--accent); font-family:'Share Tech Mono',monospace; font-size:0.82rem; }
+    .info-val.rank-val { color:var(--accent3); }
+
+    /* FAVORITES */
+    .fav-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:0; }
+    .fav-card { display:flex; flex-direction:column; align-items:center; padding:1.2rem 1rem; border-right:1px solid var(--border); border-bottom:1px solid var(--border); text-decoration:none; transition:all 0.2s; }
+    .fav-card:hover { background:rgba(0,229,255,0.04); }
+    .fav-card:hover .fav-icon { border-color:var(--accent); }
+    .fav-icon { width:52px; height:52px; border-radius:4px; background:var(--bg2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin-bottom:0.6rem; transition:all 0.2s; }
+    .fav-name { font-size:0.78rem; font-weight:700; color:var(--text); text-align:center; line-height:1.2; }
+    .fav-cat { margin-top:4px; font-family:'Share Tech Mono',monospace; font-size:0.58rem; color:var(--accent2); text-align:center; }
+
+    /* EMPTY STATE */
+    .fav-empty { padding:2rem; text-align:center; font-family:'Share Tech Mono',monospace; font-size:0.7rem; color:var(--text-muted); letter-spacing:2px; }
+
+    /* RESPONSIVE */
+    @media (max-width:600px) {
+      .profile-header { flex-direction:column; text-align:center; gap:1.2rem; }
+      .user-rank { margin:0.4rem auto 0; }
+      .username { font-size:1.2rem; }
+      header { padding:0 1rem; }
+      .logo { font-size:1rem; }
+    }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="index.html">J2ME<span>VAULT</span></a>
+  <a class="back-btn" href="index.html">← VOLVER</a>
+</header>
+
+<div class="page">
+
+  <div class="profile-header">
+    <div class="avatar-wrap">
+      <div class="avatar-glow"></div>
+      <div class="avatar">
+        <span class="avatar-initials" id="avatar-initials">P3</span>
+      </div>
+    </div>
+    <div class="user-info">
+      <div class="username" id="display-username">P3GASUS</div>
+      <div class="user-rank">
+        <span class="rank-dot"></span>
+        <span id="display-rank">[DEV] Desarrollador web</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value" id="stat-puntos">120</div>
+      <div class="stat-label">PTS DE RANGO</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-rango">MOD</div>
+      <div class="stat-label">SIGUIENTE RANGO</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-pts-next">500</div>
+      <div class="stat-label">PTS PARA SUBIR</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">INFO DE CUENTA</div>
+    </div>
+    <div class="info-row">
+      <div class="info-key">USUARIO</div>
+      <div class="info-val" id="info-username">P3GASUS</div>
+    </div>
+    <div class="info-row">
+      <div class="info-key">RANGO</div>
+      <div class="info-val rank-val" id="info-rank">[DEV] Desarrollador web</div>
+    </div>
+    <div class="info-row">
+      <div class="info-key">EMAIL</div>
+      <div class="info-val accent" id="info-email">pega***@gmail.com</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">JUEGOS FAVORITOS</div>
+      <div class="section-count" id="fav-count">1 JUEGO</div>
+    </div>
+    <div class="fav-grid" id="fav-grid"></div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const supabaseUrl = "https://hwhmhtubmbhnrugofqvf.supabase.co"
+const supabaseKey = "sb_publishable_tCLHHRkI3twgINafbj-q-A_EVDvwn-Y"
+
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+
+function getInitials(username){
+  return username.slice(0,2).toUpperCase()
+}
+
+function maskEmail(email){
+  const [user,domain] = email.split("@")
+  return user.slice(0,4) + "***@" + domain
+}
+
+function getNextRankShort(rank){
+  const match = rank.match(/\[(.+?)\]/)
+  return match ? match[1] : rank
+}
+
+function getUsernameFromURL(){
+  const params = new URLSearchParams(window.location.search)
+  return params.get("u")
+}
+
+async function loadProfile(){
+
+  const username = getUsernameFromURL()
+
+  if(!username){
+    document.getElementById("display-username").textContent="USUARIO NO ENCONTRADO"
+    return
+  }
+
+  const { data:profile } = await supabase
+  .from("profiles")
+  .select("*")
+  .eq("username",username)
+  .single()
+
+  if(!profile){
+    document.getElementById("display-username").textContent="USUARIO NO EXISTE"
+    return
+  }
+
+  document.getElementById("avatar-initials").textContent=getInitials(profile.username)
+
+  document.getElementById("display-username").textContent=profile.username
+  document.getElementById("display-rank").textContent=profile.rank
+
+  document.getElementById("info-username").textContent=profile.username
+  document.getElementById("info-rank").textContent=profile.rank
+  document.getElementById("info-email").textContent=maskEmail(profile.email)
+
+  document.getElementById("stat-puntos").textContent=profile.rank_points
+  document.getElementById("stat-rango").textContent=getNextRankShort(profile.next_rank)
+  document.getElementById("stat-pts-next").textContent=profile.points_to_next
+
+  loadFavorites(profile.id)
+
+}
+
+async function loadFavorites(user_id){
+
+  const { data:favorites } = await supabase
+  .from("favorites")
+  .select("*")
+  .eq("user_id",user_id)
+
+  const grid=document.getElementById("fav-grid")
+  grid.innerHTML=""
+
+  if(!favorites || favorites.length===0){
+    grid.innerHTML='<div class="fav-empty">// ESTE USUARIO AÚN NO TIENE FAVORITOS //</div>'
+    document.getElementById("fav-count").textContent="0 JUEGOS"
+    return
+  }
+
+  document.getElementById("fav-count").textContent=favorites.length+" JUEGO"+(favorites.length!==1?"S":"")
+
+  favorites.forEach(fav=>{
+
+    const a=document.createElement("a")
+    a.className="fav-card"
+    a.href=fav.game_page
+
+    a.innerHTML=
+    `<div class="fav-icon">${fav.icon || "🎮"}</div>
+     <div class="fav-name">${fav.game_name}</div>
+     <div class="fav-cat">${fav.category || ""}</div>`
+
+    grid.appendChild(a)
+
+  })
+
+}
+
+loadProfile()
+
+</script>
+</body>
+</html>
